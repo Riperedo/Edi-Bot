@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# C / Build
+sq_optimizer/build/
+*.o
+*.a
+*.so
+
+# TeX / LaTeX
+reporte_optimizacion/*.aux
+reporte_optimizacion/*.log
+reporte_optimizacion/*.out
+reporte_optimizacion/*.toc
+reporte_optimizacion/*.synctex.gz
+reporte_optimizacion/*.fdb_latexmk
+reporte_optimizacion/*.fls
+
+# OS
+.DS_Store
+Thumbs.db
