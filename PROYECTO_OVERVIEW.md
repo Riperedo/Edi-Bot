@@ -1,4 +1,3 @@
-# Resumen Ejecutivo: Proyecto de Optimización de Factores de Estructura S(q)
 
 Este documento detalla la visión, arquitectura, historial de desarrollo y la hoja de ruta del sistema de optimización híbrido diseñado para la resolución de parámetros en sistemas coloidales.
 
