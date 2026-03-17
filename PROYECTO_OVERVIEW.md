@@ -1,3 +1,5 @@
+# Resumen Ejecutivo: Edi-Bot
+### Evolutionary & Differential Inference-Based Optimization Tool
 
 Este documento detalla la visión, arquitectura, historial de desarrollo y la hoja de ruta del sistema de optimización híbrido diseñado para la resolución de parámetros en sistemas coloidales.
 
@@ -33,7 +35,7 @@ El objetivo principal es proporcionar una herramienta robusta y eficiente para e
 ## 3. Estado Actual y Capacidades
 El sistema es capaz de ajustar:
 - **Modelo de Esferas Duras (HS):** Paratrización de $\phi$ y $\sigma$.
-- **Modelos de Yukawa (Atractivo y Doble):** Paratrización de temperaturas efectivas, rangos de interacción y escala.
+- **Modelos de Yukawa (Atractivo y Doble):** Paratrización de temperaturas efectidas, rangos de interacción y escala.
 - **Optimización Batch:** Procesamiento automático de múltiples archivos `.dat` en una sola ejecución.
 
 ---
