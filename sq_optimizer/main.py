@@ -24,7 +24,6 @@ def process_file(file_path, model_name):
     # Definir modelos y límites (Limites fisicos aproximados)
     if model_name == "yukawa":
         param_names = ['phi', 'carga', 'sigma']
-        # limites = [(phi), (carga), (sigma)]
         bounds = [(0.01, 0.6), (1.0, 10.0), (0.5, 1.5)] 
     elif model_name == "hs":
         param_names = ['phi', 'sigma']
@@ -35,6 +34,12 @@ def process_file(file_path, model_name):
     elif model_name == "doble_yukawa":
         param_names = ['phi', 'Ta', 'Tr', 'za', 'zr', 'sigma']
         bounds = [(0.01, 0.6), (0.1, 5.0), (0.1, 5.0), (0.1, 10.0), (0.1, 10.0), (0.5, 20.0)]
+    elif model_name == "hs_vw":
+        param_names = ['phi', 'sigma']
+        bounds = [(0.01, 0.6), (0.5, 1.5)]
+    elif model_name == "wca":
+        param_names = ['phi', 'Tf', 'sigma']
+        bounds = [(0.01, 0.6), (0.1, 5.0), (0.5, 1.5)]
     else:
         print(f"Modelo {model_name} no reconocido.")
         return
@@ -56,7 +61,7 @@ def process_file(file_path, model_name):
 def main():
     parser = argparse.ArgumentParser(description="Optimizador de S(q) Coloidal - CLI Independiente")
     parser.add_argument("--input", required=True, help="Ruta al archivo .dat experimental de entrada.")
-    parser.add_argument("--modelo", default="yukawa", choices=["yukawa", "hs"], help="Modelo a utilizar.")
+    parser.add_argument("--modelo", default="yukawa", choices=["yukawa", "hs", "yukawa_atractivo", "doble_yukawa", "hs_vw", "wca"], help="Modelo a utilizar.")
     args = parser.parse_args()
 
     # Comprobar la existencia del archivo

@@ -474,6 +474,37 @@ Top 3 & 0.060 & 1.595 & 0.850 & 2.392 & 1.165 & 29.972 & 0.00040 \\
 \vspace{0.5cm}
 
 
+\subsection*{Resultados para 150mMNaCl\_110mgsmL.dat (Modelo DOBLE_YUKAWA)}
+\textbf{¿Cómo replicar?} Ejecute el siguiente comando en la terminal desde el directorio raíz del pipeline:
+\begin{verbatim}
+python sq_optimizer/main.py --input Simulation_Data/150mMNaCl_110mgsmL.dat --model doble_yukawa
+\end{verbatim}
+\textbf{Límites de Búsqueda (Bounds):} Los parámetros variables fueron explorados por Differential Evolution dentro de los siguientes radios de tolerancia físicos dictados: \newline
+phi $\in$ [0.01, 0.3], Ta $\in$ [0.1, 5.0], Tr $\in$ [0.1, 5.0], za $\in$ [0.01, 10.0], zr $\in$ [0.01, 10.0], sigma $\in$ [53.0, 56.0]
+\vspace{0.4cm}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{cccccccc}
+\toprule
+\textbf{Rango} & \textbf{phi} & \textbf{Ta} & \textbf{Tr} & \textbf{za} & \textbf{zr} & \textbf{sigma} & \textbf{Costo (MSE)} \\
+\midrule
+Top 1 & 0.036 & 4.213 & 1.287 & 1.276 & 3.366 & 55.067 & 0.00053 \\
+Top 2 & 0.038 & 4.429 & 1.646 & 1.398 & 3.405 & 55.216 & 0.00056 \\
+Top 3 & 0.037 & 4.400 & 1.520 & 1.339 & 3.116 & 55.520 & 0.00057 \\
+\bottomrule
+\end{tabular}
+\caption{Parámetros top 3 obtenidos de la evolución paramétrica de DE para este dataset.}
+\end{table}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{plot_workflow_150mMNaCl_110mgsmL.dat.png}
+\caption{Ajuste de los datos originales frente al top 3 continuo.}
+\end{figure}
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
 %%APPEND_RESULTS_HERE%%
 
 \section{Conclusiones}
