@@ -23,3 +23,6 @@ reporte_optimizacion/*.fls
 # OS
 .DS_Store
 Thumbs.db
+# Research References
+Differential Evolution/
+Particle Swarm Optimization/
