@@ -9,6 +9,7 @@ import re
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "sq_optimizer")))
 
 from sq_optimizer.core.optimize_de import run_de_optimizer
+from sq_optimizer.core.particle_swarm import run_pso_optimizer
 import numpy as np
 from sq_optimizer.utils.plot_results import save_top_k_plot
 
@@ -74,7 +75,7 @@ python sq_optimizer/main.py --input {target_file} --model {model_name}
     with open(tex_path, 'w', encoding='utf-8') as f:
         f.write(content)
 
-def run_workflow(target_file, model_name="yukawa"):
+def run_workflow(target_file, model_name="yukawa", algoritmo="de"):
     print(f"\n>>>> INICIANDO WORKFLOW AUTOMÁTICO EN {target_file}")
     
     # Check
@@ -103,10 +104,25 @@ def run_workflow(target_file, model_name="yukawa"):
         bounds = [(0.01, 0.6), (0.1, 5.0), (0.1, 10.0), (0.5, 1.5)]
     elif model_name == "doble_yukawa":
         param_names = ['phi', 'Ta', 'Tr', 'za', 'zr', 'sigma']
-        bounds = [(0.01, 0.3), (0.1, 5.0), (0.1, 5.0), (0.01, 10.0), (0.01, 10.0), (53.0, 56.0)]
+        bounds = [(0.01, 0.6), (0.1, 5.0), (0.1, 5.0), (0.1, 10.0), (0.1, 10.0), (0.01, 40.0)]
 
-    results = run_de_optimizer(q_exp, sq_exp, param_names, bounds, model_name=model_name, top_k=3, maxiter=25)
-    
+    if algoritmo == "de":
+        results = run_de_optimizer(q_exp, sq_exp, param_names, bounds, model_name=model_name, top_k=3, maxiter=50)
+    elif algoritmo == "pso":
+        results = run_pso_optimizer(
+        q_exp, sq_exp, 
+        param_names, bounds, 
+        model_name=model_name,
+        top_k=3, 
+        maxiter=500, 
+        N_particles=30
+    )
+    print("\n\n------- BEST RESULTS -------")
+    print(f"Global best params: {results['global_best_params']}")
+    print(f"Global best cost: {results['global_best_cost']}")
+    print(f"Top 3 params:\n{results['top_k_params']}")
+    print(f"Top 3 costs:\n{results['top_k_costs']}")
+
     # 2. Generar y mover gráfica al directorio de LaTeX
     print("[2/3] Generando Artefactos Analíticos (Gráficas)...")
     tex_dir = os.path.join(os.path.dirname(__file__), "reporte_optimizacion")
@@ -115,7 +131,7 @@ def run_workflow(target_file, model_name="yukawa"):
     
     save_top_k_plot(q_exp, sq_exp, results['top_k_params'], param_names, model_name, out_img_path)
 
-    # 3. Compilar LaTeX
+    ## 3. Compilar LaTeX
     print("[3/3] Compilando Documento Formal en LaTeX...")
     tex_dir = os.path.join(os.path.dirname(__file__), "reporte_optimizacion")
     tex_file = os.path.join(tex_dir, "main.tex")
@@ -136,4 +152,5 @@ if __name__ == "__main__":
         print("Uso: python run_workflow.py <Simulation_Data/nuevo_ejemplo.dat> [modelo]")
     else:
         model = sys.argv[2] if len(sys.argv) > 2 else "yukawa"
-        run_workflow(sys.argv[1], model_name=model)
+        algoritmo = sys.argv[3] if len(sys.argv) > 3 else 'de'
+        run_workflow(sys.argv[1], model_name=model, algoritmo= algoritmo)
