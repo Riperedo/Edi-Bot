@@ -62,7 +62,7 @@ python sq_optimizer/main.py --input {target_file} --model {model_name}
 \\textbf{{Límites de Búsqueda (Bounds):}} Los parámetros variables fueron explorados por Differential Evolution dentro de los siguientes radios de tolerancia físicos dictados: \\newline
 {bounds_str}
 \\vspace{{0.4cm}}
-
+ 
 {table_replacement}
 {image_replacement}
 \\vspace{{0.5cm}}
@@ -104,19 +104,26 @@ def run_workflow(target_file, model_name="yukawa", algoritmo="de"):
         bounds = [(0.01, 0.6), (0.1, 5.0), (0.1, 10.0), (0.5, 1.5)]
     elif model_name == "doble_yukawa":
         param_names = ['phi', 'Ta', 'Tr', 'za', 'zr', 'sigma']
-        bounds = [(0.01, 0.6), (0.1, 5.0), (0.1, 5.0), (0.1, 10.0), (0.1, 10.0), (0.01, 40.0)]
+        bounds = [(0.01, 0.3), (0.1, 5.0), (0.1, 5.0), (0.01, 10.0), (0.01, 10.0), (25.0, 35.0)]
+    elif model_name == "hs_vw":
+        param_names = ['phi', 'sigma']
+        bounds = [(0.01, 0.6), (0.5, 1.5)]
+    elif model_name == "wca":
+        param_names = ['phi', 'Tf', 'sigma']
+        bounds = [(0.01, 0.6), (0.01, 2.0), (0.5, 1.5)]
 
     if algoritmo == "de":
         results = run_de_optimizer(q_exp, sq_exp, param_names, bounds, model_name=model_name, top_k=3, maxiter=50)
     elif algoritmo == "pso":
         results = run_pso_optimizer(
-        q_exp, sq_exp, 
-        param_names, bounds, 
-        model_name=model_name,
-        top_k=3, 
-        maxiter=500, 
-        N_particles=30
-    )
+            q_exp, sq_exp, 
+            param_names, bounds, 
+            model_name=model_name,
+            top_k=3, 
+            maxiter=500, 
+            N_particles=30
+        )
+        
     print("\n\n------- BEST RESULTS -------")
     print(f"Global best params: {results['global_best_params']}")
     print(f"Global best cost: {results['global_best_cost']}")

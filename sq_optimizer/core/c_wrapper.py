@@ -45,8 +45,6 @@ def evaluate_sq_c(q_exp, params_dict):
             cmd.extend(["--Tr", str(params_dict['Tr'])])
         if 'za' in params_dict:
             cmd.extend(["--za", str(params_dict['za'])])
-        if 'zr' in params_dict:
-            cmd.extend(["--zr", str(params_dict['zr'])])
 
         # Ejecutar el subproceso
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
