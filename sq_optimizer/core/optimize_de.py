@@ -10,10 +10,14 @@ class TopKTracker:
         self.best_params = []
         self.best_costs = []
 
-    def callback(self, intermediate_result):
+    def callback(self, xk, convergence=None, **kwargs):
         """Callback ejecutado por DE en cada iteración/generación"""
         # Explicación: differential_evolution a partir de SciPy 1.12+ 
-        # pasa un OptimizeResult con 'population' y 'population_energies'
+        # pasa un OptimizeResult con 'population' y 'population_energies' en lugar de xk,
+        # o inspecciona la firma si es muy moderna. Acomodamos ambos casos.
+        
+        # En SciPy moderno xk podría ser el intermediate_result
+        intermediate_result = xk
         try:
             pop = intermediate_result.population
             energies = intermediate_result.population_energies
@@ -26,7 +30,7 @@ class TopKTracker:
             self.best_params = pop[top_k_indices].copy()
             self.best_costs = energies[top_k_indices].copy()
         except AttributeError:
-            pass # Si usamos version antigua de Scipy, callback recibe x, convergence
+            pass # Si usamos version antigua de Scipy, callback recibe x, convergence y xk no tiene .population
             
 
 def run_de_optimizer(q_exp, sq_exp, param_names, bounds, model_name="yukawa", top_k=3, maxiter=50):
