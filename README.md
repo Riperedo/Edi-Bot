@@ -6,6 +6,11 @@
 ---
 
 ## 🚀 Características Principales
+- **Motor Híbrido:** Cálculo de alta velocidad en C (Percurs-Yevick, MSA, Doble Yukawa) integrado con Python.
+- **Multi-Algoritmo:** Soporte para **Evolución Diferencial (DE)** y **Particle Swarm Optimization (PSO)** para una exploración robusta.
+- **Visualización Diferenciada:** Estilos de gráficas personalizados por algoritmo para una rápida identificación visual en los reportes (Azul/Rojo para DE, Púrpura/Rosa para PSO).
+- **Reporteo Automatizado:** Generación de bitácoras académicas en LaTeX con gráficas de alta resolución y tablas comparativas.
+- **Ponderación MSE:** Algoritmo ajustable para priorizar la precisión en regiones críticas de bajo vector de onda ($q$ pequeños).
 
 ---
 
@@ -26,7 +31,6 @@
    ```
 
 2. **Compilar el motor numérico en C:**
-   El proyecto utiliza un script de compilación automática. Desde la raíz:
    ```bash
    mkdir -p sq_optimizer/build
    gcc -O3 sq_optimizer/core/calcula_Sq.c structures/Hard_Sphere/Hard_Sphere.c structures/Hard_Sphere_Double_Yukawa/Hard_Sphere_Double_Yukawa.c -o sq_optimizer/build/calcula_Sq -lgsl -lgslcblas -lm
@@ -44,34 +48,47 @@
 ### 1. Workflow Automatizado (Recomendado)
 Para procesar un archivo de datos, realizar la optimización y actualizar el reporte LaTeX en un solo paso:
 ```bash
-python3 run_workflow.py Simulation_Data/example_01.dat hs
+python3 run_workflow.py Simulation_Data/example_01.dat hs pso
 ```
-*Modelos disponibles: `hs` (Esferas Duras), `yukawa`, `yukawa_atractivo`, `doble_yukawa`.*
+*Modelos: `hs`, `hs_vw`, `wca`, `yukawa`, `yukawa_atractivo`, `doble_yukawa`.*
+*Algoritmos: `de` (default), `pso`.*
 
 ### 2. Herramienta de Consola (Standalone)
-Si solo deseas realizar el ajuste sin generar el reporte completo de LaTeX:
 ```bash
-python3 sq_optimizer/main.py --input Simulation_Data/SmAb2:Arg.dat --modelo doble_yukawa
+python3 sq_optimizer/main.py --input Simulation_Data/SmAb2:Arg.dat --modelo doble_yukawa --algoritmo pso
 ```
 
 ### 3. Exploración Manual
-¿Los resultados automáticos no son satisfactorios? Consulta el tutorial de exploración manual:
+¿Los resultados automáticos no son satisfactorios? Consulta el tutorial de exploración guiada:
 - [EXPLORACION_MANUAL.md](./EXPLORACION_MANUAL.md)
+
+---
+
+## 🏆 Caso de Uso: Optimización Comparativa
+
+Recientemente, Edi-Bot fue utilizado para parametrizar complejos sistemas de Yukawa Doble comparando el rendimiento de DE y PSO en datasets del mundo real:
+
+**Datasets destacados:**
+- `SmAb2:Arg.dat`, `SmAb4:arg.dat` (Optimizados con **PSO**)
+- `SmAb2:NaCl.dat`, `SmAb4:NaCl.dat` (Optimizados con **DE**)
+
+Este flujo de trabajo permitió identificar que, para estos sistemas específicos, PSO muestra una convergencia más rápida hacia mínimos globales profundos.
 
 ---
 
 ## 📂 Estructura del Proyecto
 - `sq_optimizer/`: Núcleo del optimizador (C y Python Wrappers).
 - `structures/`: Librería de funciones físicas de S(q).
-- `Simulation_Data/`: Datos experimentales y de simulación de ejemplo.
-- `reporte_optimizacion/`: Plantillas y salida del reporte acumulativo.
+- `Simulation_Data/`: Datos experimentales y de simulación.
+- `reporte_optimizacion/`: Plantillas y salida del reporte acumulativo LaTeX.
 - `run_workflow.py`: Orquestador principal del pipeline.
 
 ---
 
 ## 🗺️ Hoja de Ruta (Roadmap)
+- [ ] Incorporar soluciones numéricas para $S(q)$ y $g(r)$.
 - [ ] Paralelización del cálculo de poblaciones.
-- [ ] Incorporación de modelos WCA y Mezclas Binarias.
+- [ ] Incorporación de Mezclas Binarias.
 - [ ] Interfaz Gráfica (GUI) para visualización en tiempo real.
 
 ---
