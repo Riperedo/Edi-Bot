@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def save_top_k_plot(q_exp, sq_exp, top_k_params, param_names, model_name, output_path):
+def save_top_k_plot(q_exp, sq_exp, top_k_params, param_names, model_name, output_path, algorithm="de"):
     """
     Genera una grafica superponiendo los datos discretos experimentales 
     con las curvas continuas del Top-K encontradas.
@@ -16,8 +16,13 @@ def save_top_k_plot(q_exp, sq_exp, top_k_params, param_names, model_name, output
     # Grafica de datos experimentales originales (Puntos discretos negros)
     plt.plot(q_exp, sq_exp, 'ko', markersize=4, label='S(q) Experimental', alpha=0.7)
     
-    # Colores visualmente agradables y definidos
-    colors = ['#e63946', '#457b9d', '#2a9d8f', '#f4a261', '#e9c46a']
+    # Colores visualmente agradables y definidos según el algoritmo
+    if algorithm.lower() == "pso":
+        # Paleta para PSO: Violetas, Naranjas, Verdes (Vibrantes)
+        colors = ['#8338ec', '#ff006e', '#ffbe0b', '#3a86ff', '#06d6a0']
+    else:
+        # Paleta para DE (Default): Rojos, Azules, Verdes oscuros
+        colors = ['#e63946', '#457b9d', '#2a9d8f', '#f4a261', '#e9c46a']
     
     # Generar un grid más fino para trazar curvas suaves, usando el dominio original
     q_dense = np.linspace(min(q_exp), max(q_exp), num=1000)
@@ -38,7 +43,7 @@ def save_top_k_plot(q_exp, sq_exp, top_k_params, param_names, model_name, output
         
         plt.plot(q_dense, sq_dense, color=colors[i % len(colors)], linewidth=2, label=lbl, alpha=0.9 if i==0 else 0.6)
         
-    plt.title(f"Ajustes Optimizados {model_name.upper()} (Top {len(top_k_params)}) via DE")
+    plt.title(f"Ajustes Optimizados {model_name.upper()} (Top {len(top_k_params)}) via {algorithm.upper()}")
     plt.xlabel('q (Vector de Onda)', fontsize=12)
     plt.ylabel('S(q) (Factor de Estructura)', fontsize=12)
     plt.grid(True, linestyle='--', alpha=0.6)

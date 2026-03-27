@@ -1,16 +1,11 @@
 # Edi-Bot 🤖
 ### Evolutionary & Differential Inference-Based Optimization Tool
 
-**Edi-Bot** es una infraestructura de optimización híbrida diseñada para la inferencia de parámetros físicos en sistemas coloidales mediante el ajuste del **Factor de Estructura Estático $S(q)$**. Combina la eficiencia de cálculo de un motor numérico en **C** con la robustez de los algoritmos de **Evolución Diferencial (DE)** en **Python**.
+**Edi-Bot** es una infraestructura de optimización híbrida diseñada para la inferencia de parámetros físicos en sistemas coloidales mediante el ajuste del **Factor de Estructura Estático $S(q)$**. Combina la eficiencia de cálculo de un motor numérico en **C** con la robustez de los algoritmos de **Evolución Diferencial (DE)** y **Particle Swarm Optimization (PSO)** en **Python**.
 
 ---
 
 ## 🚀 Características Principales
-- **Motor Híbrido:** Cálculo de alta velocidad en C (Percurs-Yevick, MSA, Doble Yukawa) integrado con Scipy.
-- **Optimización Global:** Uso de Evolución Diferencial para evitar mínimos locales y encontrar el mejor ajuste físico.
-- **Análisis Multivariable:** Ajuste simultáneo de fracción de volumen ($\phi$), escala ($\sigma$), y múltiples parámetros de interacción.
-- **Reporteo Automatizado:** Generación de bitácoras académicas en LaTeX con gráficas de alta resolución y tablas comparativas.
-- **Ponderación MSE:** Algoritmo ajustado para priorizar la precisión en regiones de bajo vector de onda ($q$ pequeños).
 
 ---
 
@@ -75,7 +70,6 @@ python3 sq_optimizer/main.py --input Simulation_Data/SmAb2:Arg.dat --modelo dobl
 ---
 
 ## 🗺️ Hoja de Ruta (Roadmap)
-- [ ] Implementación de **PSO** (Particle Swarm Optimization).
 - [ ] Paralelización del cálculo de poblaciones.
 - [ ] Incorporación de modelos WCA y Mezclas Binarias.
 - [ ] Interfaz Gráfica (GUI) para visualización en tiempo real.

@@ -13,14 +13,14 @@ from sq_optimizer.core.particle_swarm import run_pso_optimizer
 import numpy as np
 from sq_optimizer.utils.plot_results import save_top_k_plot
 
-def inject_latex(tex_path, top_params, top_costs, param_names, img_path, model_name="yukawa", bounds=[], target_file=""):
+def inject_latex(tex_path, top_params, top_costs, param_names, img_path, model_name="yukawa", bounds=[], target_file="", algoritmo="de"):
     """
     Substituye placeholders en el archivo LaTeX para automatizar dinamicamente el reporte.
     """
     with open(tex_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Reemplazar nombre del modelo
+    # Reemplazar nombre del modelo (solo si hay placeholder global, pero aquí inyectamos secciones)
     content = re.sub(r'%%MODELO_NAME%%', model_name.upper(), content)
 
     # 1. Inyectar valores de tabla
@@ -37,29 +37,30 @@ def inject_latex(tex_path, top_params, top_costs, param_names, img_path, model_n
         vals_str = " & ".join([f"{val:.3f}" for val in top_params[i]])
         table_replacement += f"Top {i+1} & {vals_str} & {top_costs[i]:.5f} \\\\\n"
     
-    table_replacement += """\\bottomrule
-\\end{tabular}
-\\caption{Parámetros top 3 obtenidos de la evolución paramétrica de DE para este dataset.}
-\\end{table}"""
+    table_replacement += f"""\\bottomrule
+\\end{{tabular}}
+\\caption{{Parámetros top 3 obtenidos mediante {algoritmo.upper()} para este dataset.}}
+\\end{{table}}"""
     
     # 2. Inyectar imagen
     image_name = os.path.basename(img_path)
     image_replacement = f"""\\begin{{figure}}[h!]
 \\centering
 \\includegraphics[width=0.8\\textwidth]{{{image_name}}}
-\\caption{{Ajuste de los datos originales frente al top 3 continuo.}}
+\\caption{{Ajuste de los datos originales frente al top 3 continuo ({algoritmo.upper()}).}}
 \\end{{figure}}"""
 
 
     bounds_str = ", ".join([f"{name} $\\in$ [{b[0]}, {b[1]}]" for name, b in zip(param_names, bounds)])
     
     base_name = os.path.basename(img_path).replace("plot_workflow_", "").replace(".png", "")
-    new_section = f"""\\subsection*{{Resultados para {base_name.replace('_', '\\_')} (Modelo {model_name.upper()})}}
-\\textbf{{¿Cómo replicar?}} Ejecute el siguiente comando en la terminal desde el directorio raíz del pipeline:
+    new_section = f"""\\subsection*{{Resultados para {base_name.replace('_', '\\_')} (Modelo {model_name.upper()} - {algoritmo.upper()})}}
+\\textbf{{¿Cómo replicar?}} Ejecute el siguiente comando en la terminal desde el directorio raíz:
 \\begin{{verbatim}}
-python sq_optimizer/main.py --input {target_file} --model {model_name}
+python3 run_workflow.py {target_file} {model_name} {algoritmo}
 \\end{{verbatim}}
-\\textbf{{Límites de Búsqueda (Bounds):}} Los parámetros variables fueron explorados por Differential Evolution dentro de los siguientes radios de tolerancia físicos dictados: \\newline
+\\textbf{{Algoritmo de Optimización:}} Se utilizó {algoritmo.upper()} para la exploración del espacio de parámetros. \\newline
+\\textbf{{Límites de Búsqueda (Bounds):}} Los parámetros variables fueron explorados dentro de los siguientes radios: \\newline
 {bounds_str}
 \\vspace{{0.4cm}}
  
@@ -77,10 +78,11 @@ python sq_optimizer/main.py --input {target_file} --model {model_name}
 
 def run_workflow(target_file, model_name="yukawa", algoritmo="de"):
     print(f"\n>>>> INICIANDO WORKFLOW AUTOMÁTICO EN {target_file}")
+    print(f"ALGORITMO SELECCIONADO: {algoritmo.upper()}")
     
     # Check
     if not os.path.isfile(target_file):
-        print("Archivo no válido.")
+        print(f"Archivo no válido: {target_file}")
         return
 
     # 1. Optimizar datos cargados
@@ -104,46 +106,36 @@ def run_workflow(target_file, model_name="yukawa", algoritmo="de"):
         bounds = [(0.01, 0.6), (0.1, 5.0), (0.1, 10.0), (0.5, 1.5)]
     elif model_name == "doble_yukawa":
         param_names = ['phi', 'Ta', 'Tr', 'za', 'zr', 'sigma']
-        bounds = [(0.01, 0.3), (0.1, 5.0), (0.1, 5.0), (0.01, 10.0), (0.01, 10.0), (25.0, 35.0)]
+        bounds = [(0.01, 0.3), (0.1, 5.0), (0.1, 5.0), (0.01, 20.0), (0.01, 20.0), (0.99, 1.01)]
     elif model_name == "hs_vw":
         param_names = ['phi', 'sigma']
         bounds = [(0.01, 0.6), (0.5, 1.5)]
     elif model_name == "wca":
         param_names = ['phi', 'Tf', 'sigma']
-        bounds = [(0.01, 0.6), (0.01, 2.0), (0.5, 1.5)]
+        bounds = [(0.01, 0.64), (0.01, 2.0), (0.5, 1.5)]
 
     if algoritmo == "de":
         results = run_de_optimizer(q_exp, sq_exp, param_names, bounds, model_name=model_name, top_k=3, maxiter=50)
     elif algoritmo == "pso":
-        results = run_pso_optimizer(
-            q_exp, sq_exp, 
-            param_names, bounds, 
-            model_name=model_name,
-            top_k=3, 
-            maxiter=500, 
-            N_particles=30
-        )
-        
-    print("\n\n------- BEST RESULTS -------")
-    print(f"Global best params: {results['global_best_params']}")
-    print(f"Global best cost: {results['global_best_cost']}")
-    print(f"Top 3 params:\n{results['top_k_params']}")
-    print(f"Top 3 costs:\n{results['top_k_costs']}")
+        results = run_pso_optimizer(q_exp, sq_exp, param_names, bounds, model_name=model_name, top_k=3, maxiter=500, N_particles=30)
+    else:
+        print(f"Algoritmo {algoritmo} no reconocido. Usando DE por defecto.")
+        results = run_de_optimizer(q_exp, sq_exp, param_names, bounds, model_name=model_name, top_k=3, maxiter=50)
 
     # 2. Generar y mover gráfica al directorio de LaTeX
     print("[2/3] Generando Artefactos Analíticos (Gráficas)...")
     tex_dir = os.path.join(os.path.dirname(__file__), "reporte_optimizacion")
-    out_img_name = f"plot_workflow_{os.path.basename(target_file)}.png"
+    out_img_name = f"plot_workflow_{os.path.basename(target_file)}_{algoritmo}.png"
     out_img_path = os.path.join(tex_dir, out_img_name)
     
-    save_top_k_plot(q_exp, sq_exp, results['top_k_params'], param_names, model_name, out_img_path)
+    save_top_k_plot(q_exp, sq_exp, results['top_k_params'], param_names, model_name, out_img_path, algorithm=algoritmo)
 
-    ## 3. Compilar LaTeX
+    # 3. Compilar LaTeX
     print("[3/3] Compilando Documento Formal en LaTeX...")
     tex_dir = os.path.join(os.path.dirname(__file__), "reporte_optimizacion")
     tex_file = os.path.join(tex_dir, "main.tex")
     
-    inject_latex(tex_file, results['top_k_params'], results['top_k_costs'], param_names, out_img_path, model_name=model_name, bounds=bounds, target_file=target_file)
+    inject_latex(tex_file, results['top_k_params'], results['top_k_costs'], param_names, out_img_path, model_name=model_name, bounds=bounds, target_file=target_file, algoritmo=algoritmo)
 
     try:
         subprocess.run(["pdflatex", "-interaction=nonstopmode", "main.tex"], cwd=tex_dir, check=True, stdout=subprocess.DEVNULL)
@@ -156,8 +148,8 @@ def run_workflow(target_file, model_name="yukawa", algoritmo="de"):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Uso: python run_workflow.py <Simulation_Data/nuevo_ejemplo.dat> [modelo]")
+        print("Uso: python3 run_workflow.py <Simulation_Data/nuevo_ejemplo.dat> [modelo] [algoritmo]")
     else:
         model = sys.argv[2] if len(sys.argv) > 2 else "yukawa"
-        algoritmo = sys.argv[3] if len(sys.argv) > 3 else 'de'
-        run_workflow(sys.argv[1], model_name=model, algoritmo= algoritmo)
+        algo = sys.argv[3] if len(sys.argv) > 3 else "de"
+        run_workflow(sys.argv[1], model_name=model, algoritmo=algo)

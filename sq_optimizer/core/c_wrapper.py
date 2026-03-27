@@ -89,7 +89,7 @@ def cost_function(params_array, param_names, q_exp, sq_exp, model_name="yukawa")
     
     # Calcular residuo (Weighted Mean Squared Error) ponderando más los q pequeños
     # Usamos un peso que decae con q, por ejemplo: 1 / (q_exp + 0.1)^2
-    weights = 1.0 / (q_exp + 0.1)**2
+    weights = 1.0 #/ (q_exp + 0.1)**2
     # Normalizamos los pesos para no disparar la magnitud del costo global
     weights = weights / np.mean(weights)
     
